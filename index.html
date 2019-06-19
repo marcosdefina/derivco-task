@@ -5,12 +5,56 @@
   <script type="text/javascript" src="./lib/jquery-3.3.1.min.js"></script>
   <script type="text/javascript" src="./lib/pixi.js"></script>
   <script type="text/javascript" src="./lib/pixi-examples.js"></script>
+  <style>
+    .hide-class {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
   <div id="display"></div>
 
   <script type="text/javascript" src="app.js"></script>
+
+  <div>
+    <button onclick="setDebugMode()">Debug</button>
+
+    <form class="hide-class" id="hide">
+      <button onclick="setDebugMode()">Insert Values</button><br><br>
+      Middle Horizontal Bar - First Reel
+      <select>
+        <option value="BAR">BAR</option>
+        <option value="BAR">2xBAR</option>
+        <option value="BAR">3xBAR</option>
+        <option value="BAR">Cherry</option>
+        <option value="BAR">Seven</option>
+      </select>
+      Second Reel
+      <select>
+        <option value="BAR">BAR</option>
+        <option value="BAR">2xBAR</option>
+        <option value="BAR">3xBAR</option>
+        <option value="BAR">Cherry</option>
+        <option value="BAR">Seven</option>
+      </select>
+      Third Reel
+      <select>
+        <option value="BAR">BAR</option>
+        <option value="BAR">2xBAR</option>
+        <option value="BAR">3xBAR</option>
+        <option value="BAR">Cherry</option>
+        <option value="BAR">Seven</option>
+      </select><br><br>
+
+      Balance <input type="number" name="balance" value=10><br><br>
+
+      Speed -
+      Reel1 <input type="number" name="spdR1" value="5">
+      Reel2 <input type="number" name="spdR2" value="5">
+      Reel3 <input type="number" name="spdR3" value="5">
+    </form>
+  </div>
 </body>
 
 </html>

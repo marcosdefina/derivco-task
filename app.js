@@ -12,6 +12,9 @@ app.loader
 const REEL_WIDTH = 160;
 const SYMBOL_SIZE = 150;
 
+var playerBalance = 5;
+
+
 // onAssetsLoaded handler builds the example.
 function onAssetsLoaded() {
     // Create different slot symbols.
@@ -54,7 +57,6 @@ function onAssetsLoaded() {
         }
         reels.push(reel);
     }
-
 
     // Build top & bottom covers and position reelContainer
     const margin = (app.screen.height - SYMBOL_SIZE * 3) / 2;
@@ -104,19 +106,28 @@ function onAssetsLoaded() {
         wordWrapWidth: 440,
     });
 
+    const increaseButton = new PIXI.Text('Insert Coin', style);
+    increaseButton.x = app.view.width - right.width - increaseButton.width;
+    increaseButton.y = app.screen.height - margin + Math.round((margin - increaseButton.height) / 2);
+    bottom.addChild(increaseButton)
+
     //Setting Balance
-    var initialBalance = 1572;
-    var playerBalance = initialBalance;
     function updateBalance(playerBalance) {
-        if (playerBalance != initialBalance)
+        if (playerBalance != this.initialBalance)
             bottom.removeChildren(0);
         const playText = new PIXI.Text('Balance: ' + playerBalance, style);
-        playText.x = Math.round((bottom.width - playText.width) / 2);
+        playText.x = left.width;
         playText.y = app.screen.height - margin + Math.round((margin - playText.height) / 2);
         bottom.addChild(playText);
+        bottom.addChild(increaseButton)
     }
     //Initial Balance
-    updateBalance(playerBalance);
+    updateBalance(this.playerBalance);
+
+    function increaseBalance() {
+        this.playerBalance += 1
+        updateBalance(this.playerBalance);
+    }
 
     // Add header text
     const headerText = new PIXI.Text('Slot Machine!', style);
@@ -149,6 +160,12 @@ function onAssetsLoaded() {
         startPlay();
     });
 
+    increaseButton.interactive = true;
+    increaseButton.buttonMode = true;
+    increaseButton.addListener('pointerdown', () => {
+        increaseBalance();
+    });
+
     let running = false;
 
     // Function to start playing.
@@ -159,13 +176,12 @@ function onAssetsLoaded() {
         playerBalance -= 1;
         updateBalance(playerBalance);
 
-        debugMode = false;
         var firstReelMoves = 1;
         var secondReelMoves = 3; // n + firstReelMoves
         var thirdReelMoves = 1; // n times secondReelMoves
-        var time = 1000*3;
+        var time = 1000 * 3;
 
-        if (debugMode) {
+        if (this.debugMode) {
             tweenTo(reels[0], 'position', reels[0].position + firstReelMoves, time,
                 backout(0.5), null, 0 === reels.length - 1 ? reelsComplete : null);
             tweenTo(reels[1], 'position', reels[1].position + secondReelMoves, time,
@@ -182,6 +198,7 @@ function onAssetsLoaded() {
                     null, i === reels.length - 1 ? reelsComplete : null);
             }
         }
+
     }
 
     // Reels done handler.
@@ -256,4 +273,18 @@ function lerp(a1, a2, t) {
 // https://github.com/CreateJS/TweenJS/blob/master/src/tweenjs/Ease.js
 function backout(amount) {
     return t => (--t * t * ((amount + 1) * t + amount) + 1);
+}
+
+var debugMode = false;
+
+function setDebugMode() {
+    this.debugMode = !this.debugMode;
+    console.log(this.debugMode)
+
+    if (this.debugMode) $("#hide").removeClass('hide-class');
+    else $("#hide").addClass('hide-class');
+}
+
+function getBalance() {
+    return this.playerBalance
 }
