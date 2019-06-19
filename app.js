@@ -166,7 +166,7 @@ function onAssetsLoaded() {
     pull.interactive = true;
     pull.buttonMode = true;
     pull.addListener('pointerdown', () => {
-        this.pull.play().then(this.pull.play());
+        this.pull.play();
         pull.scale.y *= -1;
         app.stage.addChild(pull);
         pull.interactive = false;
