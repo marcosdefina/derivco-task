@@ -23,7 +23,9 @@ var playerBalance = 5;
 var playingCoinAudio = false;
 
 
-// onAssetsLoaded handler builds the example.
+/**
+ * @function onAssetsLoaded 
+ */
 function onAssetsLoaded() {
     // Create different slot symbols.
     const slotTextures = [
@@ -159,27 +161,37 @@ function onAssetsLoaded() {
     app.stage.addChild(left);
     app.stage.addChild(right);
     app.stage.addChild(pull);
-    
+
     // Set Interactive.
     pull.interactive = true;
     pull.buttonMode = true;
     pull.addListener('pointerdown', () => {
         this.pull.play().then(this.pull.play());
-        if(this.playerBalance>0){
+        pull.scale.y *= -1;
+        app.stage.addChild(pull);
+        pull.interactive = false;
+
+        setTimeout(function(){
+            pull.scale.y *= -1;
+            app.stage.addChild(pull);
+            pull.interactive = true;
+        }, 5000)
+
+        if (this.playerBalance > 0) {
             startPlay();
         }
     });
-    
+
     increaseButton.interactive = true;
     increaseButton.buttonMode = true;
     increaseButton.addListener('pointerdown', () => {
-        if(!playingCoinAudio){
+        if (!playingCoinAudio) {
             console.log('ARRá')
             this.playingCoinAudio = true;
             this.credit.play().then(
                 increaseBalance(),
                 this.playingCoinAudio = false
-            ) 
+            )
         }
     });
 
