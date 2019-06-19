@@ -20,6 +20,7 @@ const REEL_WIDTH = 160;
 const SYMBOL_SIZE = 150;
 
 var playerBalance = 5;
+var playingCoinAudio = false;
 
 
 // onAssetsLoaded handler builds the example.
@@ -168,12 +169,18 @@ function onAssetsLoaded() {
             startPlay();
         }
     });
-
+    
     increaseButton.interactive = true;
     increaseButton.buttonMode = true;
     increaseButton.addListener('pointerdown', () => {
-        this.credit.play().then()
-        increaseBalance();
+        if(!playingCoinAudio){
+            console.log('ARRá')
+            this.playingCoinAudio = true;
+            this.credit.play().then(
+                increaseBalance(),
+                this.playingCoinAudio = false
+            ) 
+        }
     });
 
     let running = false;
