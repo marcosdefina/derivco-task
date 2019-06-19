@@ -9,11 +9,16 @@
     .hide-class {
       display: none;
     }
+
+    canvas {
+      transform-origin: center;
+      width: 100%;
+    }
   </style>
 </head>
 
 <body>
-  <iframe src="silence.mp3" allow="autoplay" id="audio" style="display:none"></iframe>
+  <iframe src="audio/silence.wav" allow="autoplay" id="audio" style="display:none"></iframe>
   <audio autoplay loop>
     <source src="audio/intro.wav" type="audio/wav">
     <source src="audio/intro.wav">
