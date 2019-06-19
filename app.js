@@ -1,5 +1,12 @@
 const app = new PIXI.Application({ backgroundColor: 0x1099bb });
-view = document.body.appendChild(app.view)
+view = document.body.appendChild(app.view);
+
+var credit = new Audio('audio/credit.wav');
+var pull = new Audio('audio/pull.flac');
+var win = new Audio('audio/small-win.mp3');
+var stopReel = new Audio('audio/stop.mp3');
+var intro = new Audio('audio/intro.wav');
+
 app.loader
     .add('bar', 'Reel/BAR.png')
     .add('2bar', 'Reel/2xBAR.png')
@@ -25,7 +32,6 @@ function onAssetsLoaded() {
         PIXI.Texture.from('seven'),
         PIXI.Texture.from('cherry'),
     ];
-
     // Build the reels
     const reels = [];
     const reelContainer = new PIXI.Container();
@@ -63,18 +69,18 @@ function onAssetsLoaded() {
     reelContainer.y = margin;
     reelContainer.x = Math.round(app.screen.width - REEL_WIDTH * 5);
     const top = new PIXI.Graphics();
-    top.beginFill(0, 1);
+    top.beginFill(0x176df4, 1);
     top.drawRect(0, 0, app.screen.width, margin);
     const bottom = new PIXI.Graphics();
-    bottom.beginFill(0, 1);
+    bottom.beginFill(0x176df4, 1);
     bottom.drawRect(0, SYMBOL_SIZE * 3 + margin, app.screen.width, margin);
 
     // Build side covers
     const right = new PIXI.Graphics();
-    right.beginFill(0, 1)
+    right.beginFill(0x176df4, 1)
     right.drawRect(app.screen.width - margin, 0, margin, app.screen.height);
     const left = new PIXI.Graphics();
-    left.beginFill(0, 1)
+    left.beginFill(0x176df4, 1)
     left.drawRect(0, 0, margin, app.screen.height);
 
     // Build horizontal bars
@@ -152,17 +158,21 @@ function onAssetsLoaded() {
     app.stage.addChild(left);
     app.stage.addChild(right);
     app.stage.addChild(pull);
-
+    
     // Set Interactive.
     pull.interactive = true;
     pull.buttonMode = true;
     pull.addListener('pointerdown', () => {
-        startPlay();
+        this.pull.play().then(this.pull.play());
+        if(this.playerBalance>0){
+            startPlay();
+        }
     });
 
     increaseButton.interactive = true;
     increaseButton.buttonMode = true;
     increaseButton.addListener('pointerdown', () => {
+        this.credit.play().then()
         increaseBalance();
     });
 
