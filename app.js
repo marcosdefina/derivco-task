@@ -54,7 +54,7 @@ function onAssetsLoaded() {
         }
         reels.push(reel);
     }
-    app.stage.addChild(reelContainer);
+
 
     // Build top & bottom covers and position reelContainer
     const margin = (app.screen.height - SYMBOL_SIZE * 3) / 2;
@@ -67,14 +67,25 @@ function onAssetsLoaded() {
     bottom.beginFill(0, 1);
     bottom.drawRect(0, SYMBOL_SIZE * 3 + margin, app.screen.width, margin);
 
-    //Build side covers
+    // Build side covers
     const right = new PIXI.Graphics();
-    right.beginFill(0,1)
+    right.beginFill(0, 1)
     right.drawRect(app.screen.width - margin, 0, margin, app.screen.height);
     const left = new PIXI.Graphics();
-    left.beginFill(0,1)
+    left.beginFill(0, 1)
     left.drawRect(0, 0, margin, app.screen.height);
-    
+
+    // Build horizontal bars
+    const htop = new PIXI.Graphics();
+    htop.beginFill(0, 1);
+    htop.drawRect(0, app.screen.height / 4, app.screen.width, 4)
+    const hmid = new PIXI.Graphics();
+    hmid.beginFill(0, 1);
+    hmid.drawRect(0, app.screen.height / 2, app.screen.width, 4)
+    const hbot = new PIXI.Graphics();
+    hbot.beginFill(0, 1);
+    hbot.drawRect(0, 3 * app.screen.height / 4, app.screen.width, 4)
+
     // Add play text
     const style = new PIXI.TextStyle({
         fontFamily: 'Arial',
@@ -92,12 +103,12 @@ function onAssetsLoaded() {
         wordWrap: true,
         wordWrapWidth: 440,
     });
-    
+
     //Setting Balance
     var initialBalance = 1572;
     var playerBalance = initialBalance;
-    function updateBalance(playerBalance){
-        if(playerBalance!=initialBalance)
+    function updateBalance(playerBalance) {
+        if (playerBalance != initialBalance)
             bottom.removeChildren(0);
         const playText = new PIXI.Text('Balance: ' + playerBalance, style);
         playText.x = Math.round((bottom.width - playText.width) / 2);
@@ -114,13 +125,17 @@ function onAssetsLoaded() {
     top.addChild(headerText);
 
     // Add Pull
-    const pull = new PIXI.Sprite(PIXI.Texture.from('pull'),);
+    const pull = new PIXI.Sprite(PIXI.Texture.from('pull'));
     // Scale the symbol to fit symbol area.
-    pull.y = app.screen.height/2;
-    pull.scale.x = pull.scale.y = 1.5*Math.min(SYMBOL_SIZE / pull.width, SYMBOL_SIZE / pull.height);
-    pull.x = app.screen.width - SYMBOL_SIZE/2;
-    pull.anchor.set(0,0.95); 
+    pull.y = app.screen.height / 2;
+    pull.scale.x = pull.scale.y = 1.5 * Math.min(SYMBOL_SIZE / pull.width, SYMBOL_SIZE / pull.height);
+    pull.x = app.screen.width - SYMBOL_SIZE / 2;
+    pull.anchor.set(0, 0.95);
 
+    app.stage.addChild(htop);
+    app.stage.addChild(hmid);
+    app.stage.addChild(hbot);
+    app.stage.addChild(reelContainer);
     app.stage.addChild(top);
     app.stage.addChild(bottom);
     app.stage.addChild(left);
@@ -140,14 +155,32 @@ function onAssetsLoaded() {
     function startPlay() {
         if (running) return;
         running = true;
+
         playerBalance -= 1;
         updateBalance(playerBalance);
-        for (let i = 0; i < reels.length; i++) {
-            const r = reels[i];
-            const extra = Math.floor(Math.random() * 3);
-            const target = r.position + 10 + i * 5 + extra;
-            const time = 2500 + i * 600 + extra * 600;
-            tweenTo(r, 'position', target, time, backout(0.5), null, i === reels.length - 1 ? reelsComplete : null);
+
+        debugMode = true;
+        var firstReelMoves = 1;
+        var secondReelMoves = 3; // n + firstReelMoves
+        var thirdReelMoves = 1; // n times secondReelMoves
+        var time = 1000*3;
+
+        if (debugMode) {
+            tweenTo(reels[0], 'position', reels[0].position + firstReelMoves, time,
+                backout(0.5), null, 0 === reels.length - 1 ? reelsComplete : null);
+            tweenTo(reels[1], 'position', reels[1].position + secondReelMoves, time,
+                backout(0.5), null, 1 === reels.length - 1 ? reelsComplete : null);
+            tweenTo(reels[2], 'position', reels[2].position + thirdReelMoves, time,
+                backout(0.5), null, 2 === reels.length - 1 ? reelsComplete : null);
+        } else {
+            for (let i = 0; i < reels.length; i++) {
+                const r = reels[i];
+                const extra = debugMode ? Math.floor(Math.random() * firstReelMoves) : firstReelMoves;
+                const target = r.position + (1 + extra) + i * secondReelMoves;
+                const time = 2500 + i * 600 + extra * 600;
+                tweenTo(r, 'position', target, time, backout(0.5),
+                    null, i === reels.length - 1 ? reelsComplete : null);
+            }
         }
     }
 
@@ -158,7 +191,7 @@ function onAssetsLoaded() {
 
     // Listen for animate update.
     app.ticker.add((delta) => {
-    // Update the slots.
+        // Update the slots.
         for (let i = 0; i < reels.length; i++) {
             const r = reels[i];
             // Update blur filter y amount based on speed.
@@ -169,15 +202,7 @@ function onAssetsLoaded() {
             // Update symbol positions on reel.
             for (let j = 0; j < r.symbols.length; j++) {
                 const s = r.symbols[j];
-                const prevy = s.y;
                 s.y = ((r.position + j) % r.symbols.length) * SYMBOL_SIZE - SYMBOL_SIZE;
-                if (s.y < 0 && prevy > SYMBOL_SIZE) {
-                    // Detect going over and swap a texture.
-                    // This should in proper product be determined from some logical reel.
-                    s.texture = slotTextures[Math.floor(Math.random() * slotTextures.length)];
-                    s.scale.x = s.scale.y = Math.min(SYMBOL_SIZE / s.texture.width, SYMBOL_SIZE / s.texture.height);
-                    s.x = Math.round((SYMBOL_SIZE - s.width) / 2);
-                }
             }
         }
     });
