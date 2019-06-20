@@ -1,3 +1,4 @@
+
 const app = new PIXI.Application({ backgroundColor: 0x1099bb });
 view = document.body.appendChild(app.view);
 
@@ -24,7 +25,7 @@ var playingCoinAudio = false;
 
 
 /**
- * @function onAssetsLoaded 
+ * @function onAssetsLoaded Build and
  */
 function onAssetsLoaded() {
     // Create different slot symbols.
@@ -308,7 +309,6 @@ var debugMode = false;
 
 function setDebugMode() {
     this.debugMode = !this.debugMode;
-    console.log(this.debugMode)
 
     if (this.debugMode) $("#hide").removeClass('hide-class');
     else $("#hide").addClass('hide-class');
