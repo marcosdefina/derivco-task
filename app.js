@@ -21,6 +21,7 @@ const SYMBOL_SIZE = 150;
 
 var playerBalance = 0;
 var playingCoinAudio = false;
+    var drawedLines = 0;
 
 
 /**
@@ -203,11 +204,17 @@ function onAssetsLoaded() {
 
     // Function to start playing.
     function startPlay() {
+        console.log('drawed:'+3*drawedLines);
+        console.log(app.stage);
+
+
         if (running) return;
         running = true;
 
         playerBalance -= 1;
         updateBalance(playerBalance);
+
+        clearLines(drawedLines);
 
         setTimeout(function(){
             combinationsSeeker(reels);
@@ -250,7 +257,6 @@ function onAssetsLoaded() {
         var line0 = new PIXI.Graphics();
         var line1 = new PIXI.Graphics();
 
-        console.log(x0,y0,x1,y1,x2,y2)
         line0.lineStyle(5, 0xFF0000); 
         line0.moveTo(x0, y0);//This is like moving the pencil to the starting point
         line0.lineTo(x1, y1);//This is moving the pencil, while drawning to the final point
@@ -265,11 +271,25 @@ function onAssetsLoaded() {
         app.stage.addChild(line1);
 
         app.render(app.stage);
+        console.log(app.stage);
+
     }
 
+    function clearLines(drawedLines){
+        drawedLines = app.stage.children.length - 9;
+        i=0;
+        //Some bug was fixed with it.. Always miss a line when popping
+        app.stage.children.pop();
+        while(i<drawedLines){
+            i++;
+            app.stage.children.pop();
+        }
+        this.drawedLines = 0;
+    }
 
+    var minY = 0;
+    var maxY = 400;
     function combinationsSeeker(reels){
-        console.log(app.stage)
         if(debugMode){
             // 80px is a correction factor to move the origin point to the reel's center
             drawLines(
@@ -280,19 +300,18 @@ function onAssetsLoaded() {
                 reels[2].container.transform.position._x+80,
                 reels[2].container.children["1"].transform.position._y
             );
-        winSong.play();
+            drawedLines += 1;
+            winSong.play();
         }
 
-        if( reels[0].container.children["0"].transform.position._y > -150 &&
-            reels[0].container.children["0"].transform.position._y < 450)
-            if(//3xBARS HORIZONTAL LINE SCORE
-                reels[0].container.children["0"].transform.position._y ==
-                reels[1].container.children["0"].transform.position._y &&
-                reels[1].container.children["0"].transform.position._y ==
-                reels[2].container.children["0"].transform.position._y
-            ) { 
-                
-        drawLines(
+        if( reels[0].container.children["0"].transform.position._y > minY &&
+            reels[0].container.children["0"].transform.position._y < maxY &&
+            reels[1].container.children["0"].transform.position._y > minY &&
+            reels[1].container.children["0"].transform.position._y < maxY &&
+            reels[2].container.children["0"].transform.position._y > minY &&
+            reels[2].container.children["0"].transform.position._y < maxY )
+        {        
+            drawLines(//3xBARS SEQUENCE
                 reels[0].container.transform.position._x+80,
                 reels[0].container.children["0"].transform.position._y,
                 reels[1].container.transform.position._x+80,
@@ -300,17 +319,18 @@ function onAssetsLoaded() {
                 reels[2].container.transform.position._x+80,
                 reels[2].container.children["0"].transform.position._y
             );
-        winSong.play();
-            }
-        if( reels[0].container.children["1"].transform.position._y > -150 &&
-            reels[0].container.children["1"].transform.position._y < 450)
-            if(//BARS HORIZONTAL LINE SCORE
-                reels[0].container.children["1"].transform.position._y ==
-                reels[1].container.children["1"].transform.position._y &&
-                reels[1].container.children["1"].transform.position._y ==
-                reels[2].container.children["1"].transform.position._y
-            ) { 
-        drawLines(
+            drawedLines += 1;
+            winSong.play();
+        }
+
+        if( reels[0].container.children["1"].transform.position._y > minY &&
+            reels[0].container.children["1"].transform.position._y < maxY &&
+            reels[1].container.children["1"].transform.position._y > minY &&
+            reels[1].container.children["1"].transform.position._y < maxY &&
+            reels[2].container.children["1"].transform.position._y > minY &&
+            reels[2].container.children["1"].transform.position._y < maxY )
+        { 
+            drawLines(//BARS SEQUENCE
                 reels[0].container.transform.position._x+80,
                 reels[0].container.children["1"].transform.position._y,
                 reels[1].container.transform.position._x+80,
@@ -318,62 +338,65 @@ function onAssetsLoaded() {
                 reels[2].container.transform.position._x+80,
                 reels[2].container.children["1"].transform.position._y
             );
-        winSong.play();
+            drawedLines += 1;
+            winSong.play();
+        }
+
+        if( reels[0].container.children["2"].transform.position._y > minY &&
+            reels[0].container.children["2"].transform.position._y < maxY &&
+            reels[1].container.children["2"].transform.position._y > minY &&
+            reels[1].container.children["2"].transform.position._y < maxY &&
+            reels[2].container.children["2"].transform.position._y > minY &&
+            reels[2].container.children["2"].transform.position._y < maxY )
+        { 
+            drawLines(//2xBARS SEQUENCE
+                    reels[0].container.transform.position._x+80,
+                    reels[0].container.children["2"].transform.position._y,
+                    reels[1].container.transform.position._x+80,
+                    reels[1].container.children["2"].transform.position._y,
+                    reels[2].container.transform.position._x+80,
+                    reels[2].container.children["2"].transform.position._y
+                );
+            drawedLines += 1;
+            winSong.play();
+        }
+
+        if( reels[0].container.children["3"].transform.position._y > minY &&
+            reels[0].container.children["3"].transform.position._y < maxY &&
+            reels[1].container.children["3"].transform.position._y > minY &&
+            reels[1].container.children["3"].transform.position._y < maxY &&
+            reels[2].container.children["3"].transform.position._y > minY &&
+            reels[2].container.children["3"].transform.position._y < maxY )
+        { 
+            drawLines(//SEVEN SEQUENCE
+                    reels[0].container.transform.position._x+80,
+                    reels[0].container.children["3"].transform.position._y,
+                    reels[1].container.transform.position._x+80,
+                    reels[1].container.children["3"].transform.position._y,
+                    reels[2].container.transform.position._x+80,
+                    reels[2].container.children["3"].transform.position._y
+                );
+                drawedLines += 1;
+                winSong.play();
             }
-        if( reels[0].container.children["2"].transform.position._y > -150 &&
-            reels[0].container.children["2"].transform.position._y < 450)
-            if(//2xBARS HORIZONTAL LINE SCORE
-                reels[0].container.children["2"].transform.position._y ==
-                reels[1].container.children["2"].transform.position._y &&
-                reels[1].container.children["2"].transform.position._y ==
-                reels[2].container.children["2"].transform.position._y
-            ) { 
-        drawLines(
-                reels[0].container.transform.position._x+80,
-                reels[0].container.children["2"].transform.position._y,
-                reels[1].container.transform.position._x+80,
-                reels[1].container.children["2"].transform.position._y,
-                reels[2].container.transform.position._x+80,
-                reels[2].container.children["2"].transform.position._y
+        if( reels[0].container.children["4"].transform.position._y > minY &&
+            reels[0].container.children["4"].transform.position._y < maxY &&
+            reels[1].container.children["4"].transform.position._y > minY &&
+            reels[1].container.children["4"].transform.position._y < maxY &&
+            reels[2].container.children["4"].transform.position._y > minY &&
+            reels[2].container.children["4"].transform.position._y < maxY 
+        ){ 
+            drawLines(//CHERRY SEQUENCE
+                    reels[0].container.transform.position._x+80,
+                    reels[0].container.children["4"].transform.position._y,
+                    reels[1].container.transform.position._x+80,
+                    reels[1].container.children["4"].transform.position._y,
+                    reels[2].container.transform.position._x+80,
+                    reels[2].container.children["4"].transform.position._y
             );
-        winSong.play();
-            }
-        if( reels[0].container.children["3"].transform.position._y > -150 &&
-            reels[0].container.children["3"].transform.position._y < 450)
-            if(//SEVEN HORIZONTAL LINE SCORE
-                reels[0].container.children["3"].transform.position._y ==
-                reels[1].container.children["3"].transform.position._y &&
-                reels[1].container.children["3"].transform.position._y ==
-                reels[2].container.children["3"].transform.position._y
-            ) { 
-        drawLines(
-                reels[0].container.transform.position._x+80,
-                reels[0].container.children["3"].transform.position._y,
-                reels[1].container.transform.position._x+80,
-                reels[1].container.children["3"].transform.position._y,
-                reels[2].container.transform.position._x+80,
-                reels[2].container.children["3"].transform.position._y
-            );
-        winSong.play();
-            }
-        if( reels[0].container.children["4"].transform.position._y > -150 &&
-            reels[0].container.children["4"].transform.position._y < 450)
-            if(//CHERRY HORIZONTAL LINE SCORE
-                reels[0].container.children["4"].transform.position._y ==
-                reels[1].container.children["4"].transform.position._y &&
-                reels[1].container.children["4"].transform.position._y ==
-                reels[2].container.children["4"].transform.position._y
-            ) { 
-        drawLines(
-                reels[0].container.transform.position._x+80,
-                reels[0].container.children["4"].transform.position._y,
-                reels[1].container.transform.position._x+80,
-                reels[1].container.children["4"].transform.position._y,
-                reels[2].container.transform.position._x+80,
-                reels[2].container.children["4"].transform.position._y
-            );
-        winSong.play();
-            }
+            drawedLines += 1;
+            winSong.play();
+        }
     }
 
     // Reels done handler.
