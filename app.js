@@ -175,7 +175,7 @@ function onAssetsLoaded() {
         if(playerBalance > 0)
             var waitTime = 5000
         else var waitTime = 300
-
+        clearLines(drawedLines);
 
         setTimeout(function(){
             pull.scale.y *= -1;
@@ -213,8 +213,6 @@ function onAssetsLoaded() {
 
         playerBalance -= 1;
         updateBalance(playerBalance);
-
-        clearLines(drawedLines);
 
         setTimeout(function(){
             combinationsSeeker(reels);
@@ -271,14 +269,16 @@ function onAssetsLoaded() {
         app.stage.addChild(line1);
 
         app.render(app.stage);
-        console.log(app.stage);
-
     }
 
     function clearLines(drawedLines){
         drawedLines = app.stage.children.length - 9;
         i=0;
-        //Some bug was fixed with it.. Always miss a line when popping
+        //When the Pull Sprite is added, it'll be popped in above logic
+        //lefting a line behind.
+        //So I have to remove it, until find a easy way, or time to skip it
+        //in the pop pipeline
+        //So, for now, the pull animation is not working.
         app.stage.children.pop();
         while(i<drawedLines){
             i++;
@@ -287,21 +287,23 @@ function onAssetsLoaded() {
         this.drawedLines = 0;
     }
 
-    var minY = 0;
-    var maxY = 400;
+    var minY = 149;
+    var maxY = 451;
     function combinationsSeeker(reels){
         if(debugMode){
             // 80px is a correction factor to move the origin point to the reel's center
-            drawLines(
-                reels[0].container.transform.position._x+80,
-                reels[0].container.children["1"].transform.position._y,
-                reels[1].container.transform.position._x+80,
-                reels[1].container.children["1"].transform.position._y,
-                reels[2].container.transform.position._x+80,
-                reels[2].container.children["1"].transform.position._y
-            );
-            drawedLines += 1;
-            winSong.play();
+            setTimeout(function(){
+                drawLines(
+                    reels[0].container.transform.position._x+80,
+                    reels[0].container.children["1"].transform.position._y,
+                    reels[1].container.transform.position._x+80,
+                    reels[1].container.children["1"].transform.position._y,
+                    reels[2].container.transform.position._x+80,
+                    reels[2].container.children["1"].transform.position._y
+                );
+                drawedLines += 1;
+                winSong.play();
+            }, 1);
         }
 
         if( reels[0].container.children["0"].transform.position._y > minY &&
@@ -311,16 +313,18 @@ function onAssetsLoaded() {
             reels[2].container.children["0"].transform.position._y > minY &&
             reels[2].container.children["0"].transform.position._y < maxY )
         {        
-            drawLines(//3xBARS SEQUENCE
-                reels[0].container.transform.position._x+80,
-                reels[0].container.children["0"].transform.position._y,
-                reels[1].container.transform.position._x+80,
-                reels[1].container.children["0"].transform.position._y,
-                reels[2].container.transform.position._x+80,
-                reels[2].container.children["0"].transform.position._y
-            );
-            drawedLines += 1;
-            winSong.play();
+            setTimeout(function(){
+                drawLines(//3xBARS SEQUENCE
+                    reels[0].container.transform.position._x+80,
+                    reels[0].container.children["0"].transform.position._y,
+                    reels[1].container.transform.position._x+80,
+                    reels[1].container.children["0"].transform.position._y,
+                    reels[2].container.transform.position._x+80,
+                    reels[2].container.children["0"].transform.position._y
+                );
+                drawedLines += 1;
+                winSong.play();
+            },1);
         }
 
         if( reels[0].container.children["1"].transform.position._y > minY &&
@@ -330,16 +334,18 @@ function onAssetsLoaded() {
             reels[2].container.children["1"].transform.position._y > minY &&
             reels[2].container.children["1"].transform.position._y < maxY )
         { 
-            drawLines(//BARS SEQUENCE
-                reels[0].container.transform.position._x+80,
-                reels[0].container.children["1"].transform.position._y,
-                reels[1].container.transform.position._x+80,
-                reels[1].container.children["1"].transform.position._y,
-                reels[2].container.transform.position._x+80,
-                reels[2].container.children["1"].transform.position._y
-            );
-            drawedLines += 1;
-            winSong.play();
+            setTimeout(function(){
+                drawLines(//BARS SEQUENCE
+                    reels[0].container.transform.position._x+80,
+                    reels[0].container.children["1"].transform.position._y,
+                    reels[1].container.transform.position._x+80,
+                    reels[1].container.children["1"].transform.position._y,
+                    reels[2].container.transform.position._x+80,
+                    reels[2].container.children["1"].transform.position._y
+                );
+                drawedLines += 1;
+                winSong.play();
+            },1);
         }
 
         if( reels[0].container.children["2"].transform.position._y > minY &&
@@ -349,16 +355,18 @@ function onAssetsLoaded() {
             reels[2].container.children["2"].transform.position._y > minY &&
             reels[2].container.children["2"].transform.position._y < maxY )
         { 
-            drawLines(//2xBARS SEQUENCE
-                    reels[0].container.transform.position._x+80,
-                    reels[0].container.children["2"].transform.position._y,
-                    reels[1].container.transform.position._x+80,
-                    reels[1].container.children["2"].transform.position._y,
-                    reels[2].container.transform.position._x+80,
-                    reels[2].container.children["2"].transform.position._y
-                );
-            drawedLines += 1;
-            winSong.play();
+            setTimeout(function(){
+                drawLines(//2xBARS SEQUENCE
+                        reels[0].container.transform.position._x+80,
+                        reels[0].container.children["2"].transform.position._y,
+                        reels[1].container.transform.position._x+80,
+                        reels[1].container.children["2"].transform.position._y,
+                        reels[2].container.transform.position._x+80,
+                        reels[2].container.children["2"].transform.position._y
+                    );
+                drawedLines += 1;
+                winSong.play();
+            }, 1);
         }
 
         if( reels[0].container.children["3"].transform.position._y > minY &&
@@ -367,18 +375,20 @@ function onAssetsLoaded() {
             reels[1].container.children["3"].transform.position._y < maxY &&
             reels[2].container.children["3"].transform.position._y > minY &&
             reels[2].container.children["3"].transform.position._y < maxY )
-        { 
-            drawLines(//SEVEN SEQUENCE
-                    reels[0].container.transform.position._x+80,
-                    reels[0].container.children["3"].transform.position._y,
-                    reels[1].container.transform.position._x+80,
-                    reels[1].container.children["3"].transform.position._y,
-                    reels[2].container.transform.position._x+80,
-                    reels[2].container.children["3"].transform.position._y
-                );
-                drawedLines += 1;
-                winSong.play();
-            }
+        {
+            setTimeout(function(){ 
+                drawLines(//SEVEN SEQUENCE
+                        reels[0].container.transform.position._x+80,
+                        reels[0].container.children["3"].transform.position._y,
+                        reels[1].container.transform.position._x+80,
+                        reels[1].container.children["3"].transform.position._y,
+                        reels[2].container.transform.position._x+80,
+                        reels[2].container.children["3"].transform.position._y
+                    );
+                    drawedLines += 1;
+                    winSong.play();
+            }, 1);
+        }
         if( reels[0].container.children["4"].transform.position._y > minY &&
             reels[0].container.children["4"].transform.position._y < maxY &&
             reels[1].container.children["4"].transform.position._y > minY &&
@@ -386,16 +396,18 @@ function onAssetsLoaded() {
             reels[2].container.children["4"].transform.position._y > minY &&
             reels[2].container.children["4"].transform.position._y < maxY 
         ){ 
-            drawLines(//CHERRY SEQUENCE
-                    reels[0].container.transform.position._x+80,
-                    reels[0].container.children["4"].transform.position._y,
-                    reels[1].container.transform.position._x+80,
-                    reels[1].container.children["4"].transform.position._y,
-                    reels[2].container.transform.position._x+80,
-                    reels[2].container.children["4"].transform.position._y
-            );
-            drawedLines += 1;
-            winSong.play();
+            setTimeout(function(){
+                drawLines(//CHERRY SEQUENCE
+                        reels[0].container.transform.position._x+80,
+                        reels[0].container.children["4"].transform.position._y,
+                        reels[1].container.transform.position._x+80,
+                        reels[1].container.children["4"].transform.position._y,
+                        reels[2].container.transform.position._x+80,
+                        reels[2].container.children["4"].transform.position._y
+                );
+                drawedLines += 1;
+                winSong.play();
+            },1);
         }
     }
 
