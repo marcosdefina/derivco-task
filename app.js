@@ -1,10 +1,9 @@
-
 const app = new PIXI.Application({ backgroundColor: 0x1099bb });
 view = document.body.appendChild(app.view);
 
 var credit = new Audio('audio/credit.wav');
 var pull = new Audio('audio/pull.flac');
-var win = new Audio('audio/small-win.mp3');
+var winSong = new Audio('audio/small-win.mp3');
 var stopReel = new Audio('audio/stop.mp3');
 var intro = new Audio('audio/intro.wav');
 
@@ -20,7 +19,7 @@ app.loader
 const REEL_WIDTH = 160;
 const SYMBOL_SIZE = 150;
 
-var playerBalance = 5;
+var playerBalance = 0;
 var playingCoinAudio = false;
 
 
@@ -172,11 +171,16 @@ function onAssetsLoaded() {
         app.stage.addChild(pull);
         pull.interactive = false;
 
+        if(playerBalance > 0)
+            var waitTime = 5000
+        else var waitTime = 300
+
+
         setTimeout(function(){
             pull.scale.y *= -1;
             app.stage.addChild(pull);
             pull.interactive = true;
-        }, 5000)
+        }, waitTime)
 
         if (this.playerBalance > 0) {
             startPlay();
@@ -187,7 +191,6 @@ function onAssetsLoaded() {
     increaseButton.buttonMode = true;
     increaseButton.addListener('pointerdown', () => {
         if (!playingCoinAudio) {
-            console.log('ARRá')
             this.playingCoinAudio = true;
             this.credit.play().then(
                 increaseBalance(),
@@ -205,6 +208,10 @@ function onAssetsLoaded() {
 
         playerBalance -= 1;
         updateBalance(playerBalance);
+
+        setTimeout(function(){
+            combinationsSeeker(reels);
+        }, 5000)//WAIT TO CONFIRMATION
 
         var firstReelMoves = 1;
         var secondReelMoves = 3; // n + firstReelMoves
@@ -226,9 +233,147 @@ function onAssetsLoaded() {
                 const time = 2500 + i * 600 + extra * 600;
                 tweenTo(r, 'position', target, time, backout(0.5),
                     null, i === reels.length - 1 ? reelsComplete : null);
+
             }
         }
 
+
+
+        console.log(reels[1]);
+        //SE POSIçÃO FOR y=150.. entao está no meio.POS - 0: -150, 1: 0, 2: 150, 3: 300, 4: 450
+        //ACESSO DE POSIçÂO: reels[i].container.children[""0""].transform.position._y
+        //ACESSO DE TEXTURA: reels[0].container.children["2"]._texture.baseTexture.textureCacheIds["0"]
+    }
+
+    function drawLines(x0,y0,x1,y1,x2,y2){
+
+        var line0 = new PIXI.Graphics();
+        var line1 = new PIXI.Graphics();
+
+        console.log(x0,y0,x1,y1,x2,y2)
+        line0.lineStyle(5, 0xFF0000); 
+        line0.moveTo(x0, y0);//This is like moving the pencil to the starting point
+        line0.lineTo(x1, y1);//This is moving the pencil, while drawning to the final point
+        line0.endFill();
+
+        line1.lineStyle(5, 0xFF0000); 
+        line1.moveTo(x1, y1);        
+        line1.lineTo(x2, y2);
+        line1.endFill();
+
+        app.stage.addChild(line0);
+        app.stage.addChild(line1);
+
+        app.render(app.stage);
+    }
+
+
+    function combinationsSeeker(reels){
+        console.log(app.stage)
+        if(debugMode){
+            // 80px is a correction factor to move the origin point to the reel's center
+            drawLines(
+                reels[0].container.transform.position._x+80,
+                reels[0].container.children["1"].transform.position._y,
+                reels[1].container.transform.position._x+80,
+                reels[1].container.children["1"].transform.position._y,
+                reels[2].container.transform.position._x+80,
+                reels[2].container.children["1"].transform.position._y
+            );
+        winSong.play();
+        }
+
+        if( reels[0].container.children["0"].transform.position._y > -150 &&
+            reels[0].container.children["0"].transform.position._y < 450)
+            if(//3xBARS HORIZONTAL LINE SCORE
+                reels[0].container.children["0"].transform.position._y ==
+                reels[1].container.children["0"].transform.position._y &&
+                reels[1].container.children["0"].transform.position._y ==
+                reels[2].container.children["0"].transform.position._y
+            ) { 
+                
+        drawLines(
+                reels[0].container.transform.position._x+80,
+                reels[0].container.children["0"].transform.position._y,
+                reels[1].container.transform.position._x+80,
+                reels[1].container.children["0"].transform.position._y,
+                reels[2].container.transform.position._x+80,
+                reels[2].container.children["0"].transform.position._y
+            );
+        winSong.play();
+            }
+        if( reels[0].container.children["1"].transform.position._y > -150 &&
+            reels[0].container.children["1"].transform.position._y < 450)
+            if(//BARS HORIZONTAL LINE SCORE
+                reels[0].container.children["1"].transform.position._y ==
+                reels[1].container.children["1"].transform.position._y &&
+                reels[1].container.children["1"].transform.position._y ==
+                reels[2].container.children["1"].transform.position._y
+            ) { 
+        drawLines(
+                reels[0].container.transform.position._x+80,
+                reels[0].container.children["1"].transform.position._y,
+                reels[1].container.transform.position._x+80,
+                reels[1].container.children["1"].transform.position._y,
+                reels[2].container.transform.position._x+80,
+                reels[2].container.children["1"].transform.position._y
+            );
+        winSong.play();
+            }
+        if( reels[0].container.children["2"].transform.position._y > -150 &&
+            reels[0].container.children["2"].transform.position._y < 450)
+            if(//2xBARS HORIZONTAL LINE SCORE
+                reels[0].container.children["2"].transform.position._y ==
+                reels[1].container.children["2"].transform.position._y &&
+                reels[1].container.children["2"].transform.position._y ==
+                reels[2].container.children["2"].transform.position._y
+            ) { 
+        drawLines(
+                reels[0].container.transform.position._x+80,
+                reels[0].container.children["2"].transform.position._y,
+                reels[1].container.transform.position._x+80,
+                reels[1].container.children["2"].transform.position._y,
+                reels[2].container.transform.position._x+80,
+                reels[2].container.children["2"].transform.position._y
+            );
+        winSong.play();
+            }
+        if( reels[0].container.children["3"].transform.position._y > -150 &&
+            reels[0].container.children["3"].transform.position._y < 450)
+            if(//SEVEN HORIZONTAL LINE SCORE
+                reels[0].container.children["3"].transform.position._y ==
+                reels[1].container.children["3"].transform.position._y &&
+                reels[1].container.children["3"].transform.position._y ==
+                reels[2].container.children["3"].transform.position._y
+            ) { 
+        drawLines(
+                reels[0].container.transform.position._x+80,
+                reels[0].container.children["3"].transform.position._y,
+                reels[1].container.transform.position._x+80,
+                reels[1].container.children["3"].transform.position._y,
+                reels[2].container.transform.position._x+80,
+                reels[2].container.children["3"].transform.position._y
+            );
+        winSong.play();
+            }
+        if( reels[0].container.children["4"].transform.position._y > -150 &&
+            reels[0].container.children["4"].transform.position._y < 450)
+            if(//CHERRY HORIZONTAL LINE SCORE
+                reels[0].container.children["4"].transform.position._y ==
+                reels[1].container.children["4"].transform.position._y &&
+                reels[1].container.children["4"].transform.position._y ==
+                reels[2].container.children["4"].transform.position._y
+            ) { 
+        drawLines(
+                reels[0].container.transform.position._x+80,
+                reels[0].container.children["4"].transform.position._y,
+                reels[1].container.transform.position._x+80,
+                reels[1].container.children["4"].transform.position._y,
+                reels[2].container.transform.position._x+80,
+                reels[2].container.children["4"].transform.position._y
+            );
+        winSong.play();
+            }
     }
 
     // Reels done handler.
