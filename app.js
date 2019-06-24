@@ -497,3 +497,12 @@ function setDebugMode() {
 function getBalance() {
     return this.playerBalance
 }
+
+function formResolver(){
+       $(document).ready(function(){
+        $("#serialize").click(function(){
+          formData= $("form").serialize();
+          console.log(formData)
+        });
+      });
+      }

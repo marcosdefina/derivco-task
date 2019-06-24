@@ -29,10 +29,19 @@
   <script type="text/javascript" src="app.js"></script>
 
   <div>
-    <button onclick="setDebugMode()">Debug</button>
+    <button onclick="setDebugMode(); formResolver()">Debug</button>
+    <form action="" class="hide-class" id="hide">
 
-    <form class="hide-class" id="hide">
-      <button onclick="setDebugMode()">Insert Values</button><br><br>
+      <button id= "serialize" onclick="setDebugMode()">Insert Values</button><br><br>
+     
+      <script>
+          $(document).ready(function(){
+            $("button").click(function(){
+              formData= $("form").serialize();
+              console.log(formData)
+            });
+          });
+          </script>
       Middle Horizontal Bar - First Reel
       <select>
         <option value="BAR">BAR</option>
